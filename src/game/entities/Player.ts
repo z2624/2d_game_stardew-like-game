@@ -32,18 +32,18 @@ export class Player extends Phaser.GameObjects.Sprite {
     this.speed = PLAYER_CONFIG.SPEED;
     this.gridPosition = { x, y };
 
-    // 设置锚点（角色脚底）
-    this.setOrigin(0.5, 0.8);
+    // 设置锚点
+    this.setOrigin(0.5, 0.5);
     
-    // 设置缩放以适应瓦片尺寸（素材帧是96x64，需要缩小）
-    this.setScale(0.3);
+    // 设置缩放 - 32x32 素材放大到合适尺寸
+    this.setScale(0.8);
 
     // 设置物理属性
     scene.physics.add.existing(this);
     const body = this.body as Phaser.Physics.Arcade.Body;
     body.setCollideWorldBounds(true);
-    body.setSize(20, 20);
-    body.setOffset(-10, -5);
+    body.setSize(16, 16);
+    body.setOffset(-8, -8);
 
     // 启用深度排序
     this.setDepth(pixelY);
@@ -99,7 +99,6 @@ export class Player extends Phaser.GameObjects.Sprite {
   // 更新方向（翻转精灵图）
   private updateDirection(): void {
     // 根据方向水平翻转精灵图
-    // 素材只有正面，向左走时需要翻转
     const shouldFlipX = this.currentDirection === Direction.W || 
                         this.currentDirection === Direction.NW || 
                         this.currentDirection === Direction.SW;

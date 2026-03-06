@@ -107,29 +107,14 @@ export class GameScene extends Phaser.Scene {
       for (let x = 0; x < MAP_WIDTH; x++) {
         const tile = mapData[y][x];
         
-        // 基础地形使用代码生成的纹理
-        let textureKey = tile.type;
-        
-        // 特殊物体使用素材包图片
-        if (tile.type === 'tree') {
-          // 随机选择树类型
-          textureKey = Math.random() > 0.5 ? 'tree-01' : 'tree-02';
-        } else if (tile.type === 'house') {
-          textureKey = 'house';
-        } else if (tile.type === 'viewpoint') {
-          textureKey = 'well'; // 观景点使用井作为标记
-        }
+        // 所有地形使用代码生成的纹理
+        const textureKey = tile.type;
         
         const sprite = this.add.sprite(
           x * TILE_SIZE + TILE_SIZE / 2,
           y * TILE_SIZE + TILE_SIZE / 2,
           textureKey
         );
-        
-        // 调整树木和房屋的缩放以适应网格
-        if (tile.type === 'tree' || tile.type === 'house') {
-          sprite.setScale(0.5); // 素材较大，需要缩小
-        }
         
         sprite.setDepth(y * TILE_SIZE);
         this.tileMap.add(sprite);

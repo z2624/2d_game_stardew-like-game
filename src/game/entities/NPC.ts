@@ -46,18 +46,18 @@ export class NPC extends Phaser.GameObjects.Sprite {
     this.speed = NPC_CONFIG.MOVEMENT_SPEED;
     this.gridPosition = { x, y };
 
-    // 设置锚点（角色脚底）
-    this.setOrigin(0.5, 0.8);
+    // 设置锚点
+    this.setOrigin(0.5, 0.5);
     
-    // 设置缩放以适应瓦片尺寸
-    this.setScale(0.3);
+    // 设置缩放 - 32x32 素材放大到合适尺寸
+    this.setScale(0.8);
 
     // 设置物理属性
     scene.physics.add.existing(this);
     const body = this.body as Phaser.Physics.Arcade.Body;
     body.setCollideWorldBounds(true);
-    body.setSize(20, 20);
-    body.setOffset(-10, -5);
+    body.setSize(16, 16);
+    body.setOffset(-8, -8);
     body.immovable = true;
 
     // 设置深度
@@ -261,7 +261,7 @@ export class NPC extends Phaser.GameObjects.Sprite {
     const bubbleWidth = Math.min(text.length * 8 + 20, 200);
     const bubbleHeight = 30;
     
-    const bubbleY = this.y - 40;
+    const bubbleY = this.y - 30;
     
     const bubble = this.scene.add.graphics();
     bubble.setName(`bubble-${this.npcId}`);
