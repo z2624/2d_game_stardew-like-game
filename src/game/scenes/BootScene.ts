@@ -16,24 +16,24 @@ export class BootScene extends Phaser.Scene {
     // 加载玩家角色精灵图（基础身体）
     // 素材帧尺寸: 32x32 像素
     this.load.spritesheet('player-idle', `${ASSET_PATH}/Characters/Human/IDLE/base_idle_strip9.png`, {
-      frameWidth: 32,
-      frameHeight: 32,
+      frameWidth: 96,
+      frameHeight: 64,
     });
     this.load.spritesheet('player-walk', `${ASSET_PATH}/Characters/Human/WALKING/base_walk_strip8.png`, {
-      frameWidth: 32,
-      frameHeight: 32,
+      frameWidth: 96,
+      frameHeight: 64,
     });
 
     // 加载6个NPC的精灵图（使用不同发型）
     const npcHairstyles = ['bowlhair', 'curlyhair', 'longhair', 'mophair', 'shorthair', 'spikeyhair'];
     npcHairstyles.forEach((style, index) => {
       this.load.spritesheet(`npc-${index}-idle`, `${ASSET_PATH}/Characters/Human/IDLE/${style}_idle_strip9.png`, {
-        frameWidth: 32,
-        frameHeight: 32,
+        frameWidth: 96,
+        frameHeight: 64,
       });
       this.load.spritesheet(`npc-${index}-walk`, `${ASSET_PATH}/Characters/Human/WALKING/${style}_walk_strip8.png`, {
-        frameWidth: 32,
-        frameHeight: 32,
+        frameWidth: 96,
+        frameHeight: 64,
       });
     });
 
