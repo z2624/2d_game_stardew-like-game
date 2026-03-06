@@ -1,8 +1,8 @@
 import Phaser from 'phaser';
 import { TILE_SIZE } from '@/game/constants';
 
-// 素材路径配置
-const ASSET_PATH = 'assets/reference/assets_reference/Sunnyside_World_ASSET_PACK_V2.1/Sunnyside_World_Assets';
+// 素材路径配置 - 从 public 目录访问
+const ASSET_PATH = 'assets/Sunnyside_World_ASSET_PACK_V2.1/Sunnyside_World_Assets';
 
 export class BootScene extends Phaser.Scene {
   constructor() {
