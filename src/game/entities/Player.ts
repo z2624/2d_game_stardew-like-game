@@ -33,10 +33,10 @@ export class Player extends Phaser.GameObjects.Sprite {
     this.gridPosition = { x, y };
 
     // 设置锚点
-    this.setOrigin(0.5, 0.8);
+    this.setOrigin(0.5, 0.7);
     
     // 设置缩放 - 32x32 素材放大到合适尺寸
-    this.setScale(0.25);
+    this.setScale(0.35);
 
     // 设置物理属性
     scene.physics.add.existing(this);
