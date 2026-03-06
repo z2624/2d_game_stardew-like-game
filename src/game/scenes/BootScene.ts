@@ -1,22 +1,8 @@
 import Phaser from 'phaser';
 import { TILE_SIZE } from '@/game/constants';
 
-// 颜色定义
-const COLORS = {
-  player: 0x3498db,
-  npc: [0xff6b6b, 0x4ecdc4, 0xffe66d, 0x95e1d3, 0xffa07a, 0xdda0dd],
-  tiles: {
-    grass: 0x7cb342,
-    tree: 0x33691e,
-    water: 0x29b6f6,
-    sand: 0xffe082,
-    dirt: 0x8d6e63,
-    stone: 0x9e9e9e,
-    house: 0x795548,
-    path: 0xd7ccc8,
-    viewpoint: 0xff5722,
-  },
-};
+// 素材路径配置
+const ASSET_PATH = 'assets/reference/assets_reference/Sunnyside_World_ASSET_PACK_V2.1/Sunnyside_World_Assets';
 
 export class BootScene extends Phaser.Scene {
   constructor() {
@@ -24,119 +10,106 @@ export class BootScene extends Phaser.Scene {
   }
 
   preload(): void {
-    // 生成彩色占位图作为纹理
-    this.generateTextures();
+    // 加载瓦片地图集
+    this.load.image('tileset', `${ASSET_PATH}/Tileset/spr_tileset_sunnysideworld_16px.png`);
+    this.load.image('tileset-forest', `${ASSET_PATH}/Tileset/spr_tileset_sunnysideworld_forest_32px.png`);
+
+    // 加载玩家角色精灵图（基础发型）
+    this.load.spritesheet('player-idle', `${ASSET_PATH}/Characters/Human/IDLE/base_idle_strip9.png`, {
+      frameWidth: 96,
+      frameHeight: 64,
+    });
+    this.load.spritesheet('player-walk', `${ASSET_PATH}/Characters/Human/WALKING/base_walk_strip8.png`, {
+      frameWidth: 96,
+      frameHeight: 64,
+    });
+    this.load.spritesheet('player-run', `${ASSET_PATH}/Characters/Human/RUN/base_run_strip8.png`, {
+      frameWidth: 96,
+      frameHeight: 64,
+    });
+
+    // 加载6个NPC的精灵图（使用不同发型）
+    const npcHairstyles = ['bowlhair', 'curlyhair', 'longhair', 'mophair', 'shorthair', 'spikeyhair'];
+    npcHairstyles.forEach((style, index) => {
+      this.load.spritesheet(`npc-${index}-idle`, `${ASSET_PATH}/Characters/Human/IDLE/${style}_idle_strip9.png`, {
+        frameWidth: 96,
+        frameHeight: 64,
+      });
+      this.load.spritesheet(`npc-${index}-walk`, `${ASSET_PATH}/Characters/Human/WALKING/${style}_walk_strip8.png`, {
+        frameWidth: 96,
+        frameHeight: 64,
+      });
+    });
+
+    // 加载环境装饰物
+    this.load.image('tree-01', `${ASSET_PATH}/Environment/spr_deco_tree_01/layers/35b80d4c-f4cb-4aa8-a423-b9a9470fb6ef/5e39c3d9-52ff-4624-b0da-f5504f2cbc21.png`);
+    this.load.image('tree-02', `${ASSET_PATH}/Environment/spr_deco_tree_02/layers/203e8642-ec7b-4c07-8f7e-dc272e6c2b2e/affae896-cb65-4059-ba4d-00e3ccbac2ed.png`);
+    this.load.image('well', `${ASSET_PATH}/Environment/spr_deco_well/layers/c3d011a3-e1d2-4f14-83d7-d21b9f689713/5f572a2a-2ccd-424d-9c49-b9ad5058389a.png`);
+    this.load.image('windmill', `${ASSET_PATH}/Environment/spr_deco_windmill/layers/01dd11e2-59a3-44fc-ac1c-5d256c0f2154/b90537ea-f3de-4216-bf90-ef7f1d40bef6.png`);
+    this.load.image('house', `${ASSET_PATH}/Environment/spr_deco_cook_chinmney/layers/31ab948f-42c9-47ce-9cb7-456406ed0139/2f91b825-bbff-494c-9303-1a8999664c1d.png`);
+    this.load.image('campfire', `${ASSET_PATH}/Environment/spr_deco_campfire/layers/d292d1cc-d3d3-4222-9506-b1c7072c523c/fdf24dcd-2f84-46c6-aad2-188692f35fc5.png`);
+
+    // 加载进度事件
+    this.load.on('progress', (value: number) => {
+      console.log(`Loading: ${Math.round(value * 100)}%`);
+    });
+
+    this.load.on('complete', () => {
+      console.log('All assets loaded');
+    });
+
+    // 加载错误处理
+    this.load.on('loaderror', (file: Phaser.Loader.File) => {
+      console.warn(`Failed to load: ${file.key}`);
+    });
   }
 
   create(): void {
+    // 创建动画
+    this.createAnimations();
+
     // 切换到游戏场景
     this.scene.start('GameScene');
   }
 
-  private generateTextures(): void {
-    // 玩家纹理
-    this.createPlayerTexture();
-    
-    // NPC 纹理
-    this.createNPCTextures();
-    
-    // 瓦片纹理
-    this.createTileTextures();
-  }
-
-  private createPlayerTexture(): void {
-    const graphics = this.make.graphics({ x: 0, y: 0 }, false);
-    
-    // 身体
-    graphics.fillStyle(COLORS.player, 1);
-    graphics.fillRect(0, 0, TILE_SIZE, TILE_SIZE);
-    
-    // 边框
-    graphics.lineStyle(2, 0xffffff, 1);
-    graphics.strokeRect(0, 0, TILE_SIZE, TILE_SIZE);
-    
-    // 方向指示器（南方）
-    graphics.fillStyle(0xffff00, 1);
-    graphics.fillTriangle(
-      TILE_SIZE / 2, TILE_SIZE + 2,
-      TILE_SIZE / 2 - 4, TILE_SIZE - 4,
-      TILE_SIZE / 2 + 4, TILE_SIZE - 4
-    );
-    
-    graphics.generateTexture('player', TILE_SIZE, TILE_SIZE + 6);
-    graphics.destroy();
-  }
-
-  private createNPCTextures(): void {
-    COLORS.npc.forEach((color, index) => {
-      const graphics = this.make.graphics({ x: 0, y: 0 }, false);
-      
-      // 身体（圆形）
-      graphics.fillStyle(color, 1);
-      graphics.fillCircle(TILE_SIZE / 2, TILE_SIZE / 2, TILE_SIZE / 2 - 2);
-      
-      // 边框
-      graphics.lineStyle(2, 0xffffff, 0.8);
-      graphics.strokeCircle(TILE_SIZE / 2, TILE_SIZE / 2, TILE_SIZE / 2 - 2);
-      
-      // 方向指示点
-      graphics.fillStyle(0xffffff, 1);
-      graphics.fillCircle(TILE_SIZE / 2, TILE_SIZE / 2 + TILE_SIZE / 4, 3);
-      
-      graphics.generateTexture(`npc-${index}`, TILE_SIZE, TILE_SIZE);
-      graphics.destroy();
+  private createAnimations(): void {
+    // 玩家动画
+    this.anims.create({
+      key: 'player-idle',
+      frames: this.anims.generateFrameNumbers('player-idle', { start: 0, end: 8 }),
+      frameRate: 8,
+      repeat: -1,
     });
-  }
 
-  private createTileTextures(): void {
-    const tileTypes = [
-      { name: 'grass', color: COLORS.tiles.grass },
-      { name: 'tree', color: COLORS.tiles.tree },
-      { name: 'water', color: COLORS.tiles.water },
-      { name: 'sand', color: COLORS.tiles.sand },
-      { name: 'dirt', color: COLORS.tiles.dirt },
-      { name: 'stone', color: COLORS.tiles.stone },
-      { name: 'house', color: COLORS.tiles.house },
-      { name: 'path', color: COLORS.tiles.path },
-      { name: 'viewpoint', color: COLORS.tiles.viewpoint },
-    ];
-
-    tileTypes.forEach(({ name, color }) => {
-      const graphics = this.make.graphics({ x: 0, y: 0 }, false);
-      
-      // 基础填充
-      graphics.fillStyle(color, 1);
-      graphics.fillRect(0, 0, TILE_SIZE, TILE_SIZE);
-      
-      // 特殊效果
-      if (name === 'grass') {
-        // 添加一些草的细节
-        graphics.fillStyle(0x558b2f, 0.3);
-        graphics.fillRect(4, 4, 4, 4);
-        graphics.fillRect(20, 12, 4, 4);
-        graphics.fillRect(12, 20, 4, 4);
-      } else if (name === 'tree') {
-        // 树干
-        graphics.fillStyle(0x5d4037, 1);
-        graphics.fillRect(12, 12, 8, 20);
-        // 树冠
-        graphics.fillStyle(0x2e7d32, 1);
-        graphics.fillCircle(16, 10, 12);
-      } else if (name === 'water') {
-        // 水波纹
-        graphics.fillStyle(0x4fc3f7, 0.5);
-        graphics.fillRect(4, 8, 12, 2);
-        graphics.fillRect(16, 20, 10, 2);
-      } else if (name === 'viewpoint') {
-        // 观景点标记
-        graphics.lineStyle(2, 0xffeb3b, 1);
-        graphics.strokeRect(2, 2, TILE_SIZE - 4, TILE_SIZE - 4);
-        graphics.fillStyle(0xffeb3b, 0.5);
-        graphics.fillCircle(TILE_SIZE / 2, TILE_SIZE / 2, 6);
-      }
-      
-      graphics.generateTexture(name, TILE_SIZE, TILE_SIZE);
-      graphics.destroy();
+    this.anims.create({
+      key: 'player-walk',
+      frames: this.anims.generateFrameNumbers('player-walk', { start: 0, end: 7 }),
+      frameRate: 12,
+      repeat: -1,
     });
+
+    this.anims.create({
+      key: 'player-run',
+      frames: this.anims.generateFrameNumbers('player-run', { start: 0, end: 7 }),
+      frameRate: 16,
+      repeat: -1,
+    });
+
+    // NPC 动画（6个NPC，每个有自己的发型）
+    for (let i = 0; i < 6; i++) {
+      this.anims.create({
+        key: `npc-${i}-idle`,
+        frames: this.anims.generateFrameNumbers(`npc-${i}-idle`, { start: 0, end: 8 }),
+        frameRate: 8,
+        repeat: -1,
+      });
+
+      this.anims.create({
+        key: `npc-${i}-walk`,
+        frames: this.anims.generateFrameNumbers(`npc-${i}-walk`, { start: 0, end: 7 }),
+        frameRate: 10,
+        repeat: -1,
+      });
+    }
   }
 }

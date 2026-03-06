@@ -99,15 +99,38 @@ export class GameScene extends Phaser.Scene {
     this.mapGenerator = new MapGenerator();
     const mapData = this.mapGenerator.generate();
 
+    // 先生成基础地形纹理（使用代码生成）
+    this.generateBaseTileTextures();
+
     // 渲染地图瓦片
     for (let y = 0; y < MAP_HEIGHT; y++) {
       for (let x = 0; x < MAP_WIDTH; x++) {
         const tile = mapData[y][x];
+        
+        // 基础地形使用代码生成的纹理
+        let textureKey = tile.type;
+        
+        // 特殊物体使用素材包图片
+        if (tile.type === 'tree') {
+          // 随机选择树类型
+          textureKey = Math.random() > 0.5 ? 'tree-01' : 'tree-02';
+        } else if (tile.type === 'house') {
+          textureKey = 'house';
+        } else if (tile.type === 'viewpoint') {
+          textureKey = 'well'; // 观景点使用井作为标记
+        }
+        
         const sprite = this.add.sprite(
           x * TILE_SIZE + TILE_SIZE / 2,
           y * TILE_SIZE + TILE_SIZE / 2,
-          tile.type
+          textureKey
         );
+        
+        // 调整树木和房屋的缩放以适应网格
+        if (tile.type === 'tree' || tile.type === 'house') {
+          sprite.setScale(0.5); // 素材较大，需要缩小
+        }
+        
         sprite.setDepth(y * TILE_SIZE);
         this.tileMap.add(sprite);
       }
@@ -115,6 +138,43 @@ export class GameScene extends Phaser.Scene {
 
     // 设置世界边界
     this.physics.world.setBounds(0, 0, GAME_WIDTH, GAME_HEIGHT);
+  }
+
+  // 生成基础地形纹理
+  private generateBaseTileTextures(): void {
+    const tileConfigs = [
+      { name: 'grass', color: 0x7cb342, detail: 0x558b2f },
+      { name: 'water', color: 0x29b6f6, detail: 0x4fc3f7 },
+      { name: 'sand', color: 0xffe082, detail: 0xffca28 },
+      { name: 'dirt', color: 0x8d6e63, detail: 0x6d4c41 },
+      { name: 'stone', color: 0x9e9e9e, detail: 0x757575 },
+      { name: 'path', color: 0xd7ccc8, detail: 0xbcaaa4 },
+    ];
+
+    tileConfigs.forEach(({ name, color, detail }) => {
+      if (!this.textures.exists(name)) {
+        const graphics = this.make.graphics({ x: 0, y: 0 }, false);
+        
+        // 基础填充
+        graphics.fillStyle(color, 1);
+        graphics.fillRect(0, 0, TILE_SIZE, TILE_SIZE);
+        
+        // 添加细节纹理
+        graphics.fillStyle(detail, 0.3);
+        for (let i = 0; i < 3; i++) {
+          const dx = Math.random() * (TILE_SIZE - 4);
+          const dy = Math.random() * (TILE_SIZE - 4);
+          graphics.fillRect(dx, dy, 2, 2);
+        }
+        
+        // 添加轻微边框
+        graphics.lineStyle(1, detail, 0.2);
+        graphics.strokeRect(0, 0, TILE_SIZE, TILE_SIZE);
+        
+        graphics.generateTexture(name, TILE_SIZE, TILE_SIZE);
+        graphics.destroy();
+      }
+    });
   }
 
   private initPlayer(): void {
@@ -128,17 +188,15 @@ export class GameScene extends Phaser.Scene {
   }
 
   private initNPCs(): void {
-    // 使用前6个 NPC 配置
+    // 使用前6个 NPC 配置，每个使用不同发型
     const npcConfigs = NPC_SPAWN_POINTS.slice(0, 6);
     
     npcConfigs.forEach((config, index) => {
-      const color = NPC_CONFIG.COLORS[index % NPC_CONFIG.COLORS.length];
-      
       const npc = new NPC(this, config.x, config.y, {
         id: `npc-${index}`,
         name: config.name,
         role: config.role,
-        color: color,
+        index: index,  // 0-5 对应不同发型
       });
       
       // 设置交互

@@ -1,18 +1,15 @@
-// NPC 实体
+// NPC 实体 - 使用素材包精灵图
 
 import Phaser from 'phaser';
 import { Direction, TILE_SIZE, NPC_CONFIG } from '@/game/constants';
 import type { NPCData, Position } from '@/types/index';
 
-export class NPC extends Phaser.GameObjects.Container {
-  private sprite: Phaser.GameObjects.Graphics;
-  private nameText: Phaser.GameObjects.Text;
-  
+export class NPC extends Phaser.GameObjects.Sprite {
   // NPC 数据
   private npcId: string;
   private npcName: string;
   private npcRole: string;
-  private color: number;
+  private npcIndex: number;  // 0-5，对应不同发型
   private currentDirection: Direction = Direction.S;
   private isMoving: boolean = false;
   private gridPosition: Position = { x: 0, y: 0 };
@@ -33,47 +30,44 @@ export class NPC extends Phaser.GameObjects.Container {
       id: string;
       name: string;
       role: string;
-      color: number;
+      index: number;  // 0-5，对应不同发型
     }
   ) {
     // 转换为像素坐标
     const pixelX = x * TILE_SIZE + TILE_SIZE / 2;
     const pixelY = y * TILE_SIZE + TILE_SIZE / 2;
     
-    super(scene, pixelX, pixelY);
+    super(scene, pixelX, pixelY, `npc-${config.index}-idle`, 0);
     
     this.npcId = config.id;
     this.npcName = config.name;
     this.npcRole = config.role;
-    this.color = config.color;
+    this.npcIndex = config.index;
     this.speed = NPC_CONFIG.MOVEMENT_SPEED;
     this.gridPosition = { x, y };
 
-    // 创建 NPC 精灵
-    this.sprite = scene.add.graphics();
-    this.drawNPCSprite();
-
-    // 创建名字标签
-    this.nameText = scene.add.text(0, -TILE_SIZE - 5, config.name, {
-      fontSize: '10px',
-      color: '#ffffff',
-      backgroundColor: '#000000aa',
-      padding: { x: 2, y: 1 },
-    }).setOrigin(0.5);
-
-    // 添加到容器
-    this.add([this.sprite, this.nameText]);
+    // 设置锚点（角色脚底）
+    this.setOrigin(0.5, 0.8);
+    
+    // 设置缩放以适应瓦片尺寸
+    this.setScale(0.3);
 
     // 设置物理属性
     scene.physics.add.existing(this);
     const body = this.body as Phaser.Physics.Arcade.Body;
     body.setCollideWorldBounds(true);
-    body.setSize(TILE_SIZE * 0.5, TILE_SIZE * 0.5);
-    body.setOffset(-TILE_SIZE * 0.25, -TILE_SIZE * 0.25);
+    body.setSize(20, 20);
+    body.setOffset(-10, -5);
     body.immovable = true;
 
     // 设置深度
     this.setDepth(pixelY);
+
+    // 播放待机动画
+    this.play(`npc-${this.npcIndex}-idle`);
+
+    // 设置交互
+    this.setInteractive();
 
     scene.add.existing(this);
 
@@ -81,34 +75,7 @@ export class NPC extends Phaser.GameObjects.Container {
     this.resetIdleTimer();
   }
 
-  // 绘制 NPC 精灵
-  private drawNPCSprite(): void {
-    this.sprite.clear();
-    
-    // 身体（圆形）
-    this.sprite.fillStyle(this.color, 1);
-    this.sprite.fillCircle(0, 0, TILE_SIZE / 2 - 2);
-    
-    // 边框
-    this.sprite.lineStyle(2, 0xffffff, 0.8);
-    this.sprite.strokeCircle(0, 0, TILE_SIZE / 2 - 2);
-    
-    // 方向指示小点
-    this.sprite.fillStyle(0xffffff, 1);
-    const dotOffset = TILE_SIZE / 4;
-    switch (this.currentDirection) {
-      case Direction.N: this.sprite.fillCircle(0, -dotOffset, 3); break;
-      case Direction.S: this.sprite.fillCircle(0, dotOffset, 3); break;
-      case Direction.E: this.sprite.fillCircle(dotOffset, 0, 3); break;
-      case Direction.W: this.sprite.fillCircle(-dotOffset, 0, 3); break;
-      case Direction.NE: this.sprite.fillCircle(dotOffset * 0.7, -dotOffset * 0.7, 3); break;
-      case Direction.NW: this.sprite.fillCircle(-dotOffset * 0.7, -dotOffset * 0.7, 3); break;
-      case Direction.SE: this.sprite.fillCircle(dotOffset * 0.7, dotOffset * 0.7, 3); break;
-      case Direction.SW: this.sprite.fillCircle(-dotOffset * 0.7, dotOffset * 0.7, 3); break;
-    }
-  }
-
-  // 更新方向
+  // 更新方向（翻转精灵图）
   private updateDirection(dx: number, dy: number): void {
     // 计算8方向
     if (Math.abs(dx) > 0.1 || Math.abs(dy) > 0.1) {
@@ -126,8 +93,12 @@ export class NPC extends Phaser.GameObjects.Container {
         this.currentDirection = dx > 0 ? Direction.E : Direction.W;
       }
       
-      this.sprite.clear();
-      this.drawNPCSprite();
+      // 根据方向水平翻转精灵图
+      const shouldFlipX = this.currentDirection === Direction.W || 
+                          this.currentDirection === Direction.NW || 
+                          this.currentDirection === Direction.SW;
+      
+      this.setFlipX(shouldFlipX);
     }
   }
 
@@ -161,6 +132,9 @@ export class NPC extends Phaser.GameObjects.Container {
           this.isMoving = false;
           this.targetGridPosition = null;
           this.resetIdleTimer();
+          
+          // 切换回待机动画
+          this.play(`npc-${this.npcIndex}-idle`, true);
         } else {
           // 继续移动
           const vx = (dx / distance) * this.speed;
@@ -210,6 +184,9 @@ export class NPC extends Phaser.GameObjects.Container {
       if (mapGenerator?.isWalkable(newX, newY) ?? true) {
         this.targetGridPosition = { x: newX, y: newY };
         this.isMoving = true;
+        
+        // 切换行走动画
+        this.play(`npc-${this.npcIndex}-walk`, true);
         return;
       }
     }
@@ -259,7 +236,7 @@ export class NPC extends Phaser.GameObjects.Container {
       id: this.npcId,
       name: this.npcName,
       role: this.npcRole,
-      color: this.color,
+      color: 0xffffff,
       position: { ...this.gridPosition },
       currentDirection: this.currentDirection,
       isMoving: this.isMoving,
@@ -269,14 +246,13 @@ export class NPC extends Phaser.GameObjects.Container {
 
   // 设置交互回调
   setInteractionCallback(callback: () => void): void {
-    this.sprite.setInteractive();
-    this.sprite.on('pointerdown', callback);
+    this.on('pointerdown', callback);
   }
 
   // 显示对话气泡
   showSpeechBubble(text: string, duration: number = 3000): void {
     // 移除旧的气泡
-    const existingBubble = this.getByName('speechBubble');
+    const existingBubble = this.scene.children.getByName(`bubble-${this.npcId}`);
     if (existingBubble) {
       existingBubble.destroy();
     }
@@ -285,28 +261,23 @@ export class NPC extends Phaser.GameObjects.Container {
     const bubbleWidth = Math.min(text.length * 8 + 20, 200);
     const bubbleHeight = 30;
     
+    const bubbleY = this.y - 40;
+    
     const bubble = this.scene.add.graphics();
+    bubble.setName(`bubble-${this.npcId}`);
     bubble.fillStyle(0xffffff, 1);
-    bubble.fillRoundedRect(-bubbleWidth / 2, -TILE_SIZE - 35, bubbleWidth, bubbleHeight, 5);
+    bubble.fillRoundedRect(this.x - bubbleWidth / 2, bubbleY - bubbleHeight / 2, bubbleWidth, bubbleHeight, 5);
     bubble.lineStyle(2, 0x000000, 1);
-    bubble.strokeRoundedRect(-bubbleWidth / 2, -TILE_SIZE - 35, bubbleWidth, bubbleHeight, 5);
-    bubble.name = 'speechBubble';
+    bubble.strokeRoundedRect(this.x - bubbleWidth / 2, bubbleY - bubbleHeight / 2, bubbleWidth, bubbleHeight, 5);
 
     // 创建文字
-    const bubbleText = this.scene.add.text(0, -TILE_SIZE - 20, text, {
+    const bubbleText = this.scene.add.text(this.x, bubbleY, text, {
       fontSize: '10px',
       color: '#000000',
       align: 'center',
       wordWrap: { width: bubbleWidth - 10 },
     }).setOrigin(0.5);
-    bubbleText.name = 'speechText';
-
-    // 添加阴影三角形
-    bubble.fillStyle(0xffffff, 1);
-    bubble.fillTriangle(0, -TILE_SIZE - 5, -5, -TILE_SIZE - 10, 5, -TILE_SIZE - 10);
-
-    // 添加到容器
-    this.add([bubble, bubbleText]);
+    bubbleText.setName(`bubbleText-${this.npcId}`);
 
     // 定时移除
     this.scene.time.delayedCall(duration, () => {

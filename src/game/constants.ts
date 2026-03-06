@@ -1,6 +1,6 @@
 // 游戏常量定义
 
-export const TILE_SIZE = 32;
+export const TILE_SIZE = 16;  // 素材包瓦片尺寸为 16x16
 export const MAP_WIDTH = 50;
 export const MAP_HEIGHT = 50;
 
