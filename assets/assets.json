@@ -1,0 +1,165 @@
+{
+  "name": "Sunnyside World Asset Pack V2.1",
+  "version": "2.1",
+  "totalSize": "115MB",
+  "totalFiles": 11670,
+  "description": "完整的2D像素农场游戏素材包，包含角色动画、环境、UI、道具等",
+  "source": "assets_reference/Sunnyside_World_ASSET_PACK_V2.1",
+  "categories": {
+    "characters": {
+      "description": "角色精灵图和动画序列",
+      "path": "Sunnyside_World_Assets/Characters",
+      "subcategories": {
+        "human": {
+          "path": "Human",
+          "animations": [
+            "IDLE", "WALKING", "RUN", "JUMP", 
+            "ATTACK", "MINING", "HAMMERING", "DIG",
+            "WATERING", "CASTING", "REELING", "CAUGHT",
+            "CARRY", "DOING", "WAITING", "SWIMMING",
+            "ROLL", "HURT", "DEATH"
+          ],
+          "hairstyles": ["base", "bowlhair", "curlyhair", "longhair", "mophair", "shorthair", "spikeyhair"],
+          "note": "每个发型包含完整的动画序列，4方向或8方向"
+        }
+      }
+    },
+    "environment": {
+      "description": "环境和装饰物体",
+      "path": "Sunnyside_World_Assets/Environment",
+      "subcategories": {
+        "trees": ["tree_01", "tree_02"],
+        "buildings": ["well", "windmill", "cook_chimney"],
+        "containers": ["chest_01", "chest_02", "barrel_closed", "barrel_open", "barrel_water", "barrel_swords", "crate_01", "crate_02"],
+        "furniture": ["chair_01", "sidetable_01"],
+        "decoration": [
+          "campfire", "fire_01", "fire_02", "firepit",
+          "flowers_house_01", "flowers_house_02",
+          "picture_01", "rug_01",
+          "book_01", "book_02", "mug_01", "mug_02",
+          "acorn", "bucket", "bucket_rope", "jar_01", "jar_02",
+          "beam", "plate", "plate_food", "plate_knifeandfork",
+          "knifeandfork", "trough", "waterbowl", "anvil"
+        ],
+        "animals": ["chicken_01", "cow", "duck_01", "pig_01", "sheep_01", "bird_01"]
+      }
+    },
+    "resources": {
+      "description": "资源采集物",
+      "path": "Sunnyside_World_Assets/Resources",
+      "items": {
+        "crops": {
+          "cabbage": ["cabbage_00", "cabbage_01", "cabbage_02", "cabbage_03", "cabbage_04", "cabbage_05"],
+          "cauliflower": ["cauliflower_00", "cauliflower_01", "cauliflower_02", "cauliflower_03", "cauliflower_04", "cauliflower_05"],
+          "beetroot": ["beetroot_00", "beetroot_01"],
+          "wheat": ["wheat_00", "wheat_01", "wheat_02", "wheat_03", "wheat_04", "wheat_05"],
+          "potato": ["potato_00"],
+          "pumpkin": ["pumpkin_00", "pumpkin_01"],
+          "radish": ["radish_00", "radish_01", "radish_02", "radish_03", "radish_04"],
+          "sunflower": ["sunflower_00", "sunflower_01", "sunflower_02", "sunflower_03", "sunflower_04", "sunflower_05"]
+        },
+        "ore": ["ore_bluestone", "ore_coal", "ore_gold", "ore_silver", "ore_stone"],
+        "fish": ["fish"],
+        "wood": ["wood"],
+        "truffle": ["truffle"],
+        "wool": ["wool"],
+        "coins": ["coin", "coins"]
+      }
+    },
+    "ui": {
+      "description": "用户界面元素",
+      "path": "Sunnyside_World_Assets/UI",
+      "items": {
+        "boxes": {
+          "dark": {
+            "prefix": "dt_box_9slice",
+            "pieces": ["tl", "tc", "tr", "lc", "c", "rc", "bl", "bc", "br"]
+          },
+          "light": {
+            "prefix": "lt_box_9slice",
+            "pieces": ["tl", "tc", "tr", "lc", "c", "rc", "bl", "bc", "br"]
+          },
+          "white": {
+            "prefix": "w_box_9slice",
+            "pieces": ["tl", "tc", "tr", "lc", "c", "rc", "bl", "bc", "br"]
+          }
+        },
+        "selectors": ["select_dots", "selectbox_br"],
+        "indicators": {
+          "progress_bars": ["bluebar_00", "greenbar_06_1"],
+          "arrows": ["arrow_left", "arrow_right"],
+          "expressions": ["expression_attack"]
+        },
+        "misc": ["stopwatch", "itemdisc_01", "playercount"]
+      }
+    },
+    "tools": {
+      "description": "工具和武器",
+      "path": "Sunnyside_World_Assets/Tools",
+      "items": ["axe", "sword", "rod", "rod_alt", "spr_watering", "spr_watering456", "spr_axe465"]
+    },
+    "effects": {
+      "description": "特效和粒子",
+      "path": "Sunnyside_World_Assets/Effects",
+      "items": {
+        "dust": ["dust_land_single_B_strip3", "dust_land_sidepuff_strip5"],
+        "water": ["water"],
+        "shadows": ["shadow", "charactershadow", "windmillshadow"],
+        "glints": ["glint_01", "glint_02"],
+        "blinking": ["blinking"]
+      }
+    },
+    "tilesets": {
+      "description": "瓦片地图集",
+      "path": "Sunnyside_World_Assets/Tilesets",
+      "items": ["tileset_sunnysideworld", "tileset_sunnysideworld_forest"]
+    }
+  },
+  "usage": {
+    "player_character": {
+      "recommended": "Human/base + 可选发型",
+      "animations_needed": ["IDLE", "WALKING", "RUN"],
+      "optional": ["WATERING", "MINING", "CARRY"]
+    },
+    "npc_characters": {
+      "recommended": "Human/ + 不同发型组合",
+      "note": "使用bowlhair, curlyhair, longhair, mophair, shorthair, spikeyhair作为6个NPC的基础"
+    },
+    "environment_props": {
+      "peak_area": ["tree_01", "tree_02", "well", "windmill"],
+      "village_area": ["flowers_house_01", "flowers_house_02", "chair_01", "sidetable_01"],
+      "beach_area": ["campfire", "coracle"],
+      "shop_area": ["chest_01", "chest_02", "barrel_*", "crate_*"],
+      "workshop_area": ["anvil", "firepit"]
+    },
+    "ui_elements": {
+      "dialog_boxes": "w_box_9slice_* (白色9切片框)",
+      "progress_bars": "bluebar_00, greenbar_06_1",
+      "buttons": "select_dots, selectbox_br"
+    }
+  },
+  "technical": {
+    "format": "PNG",
+    "frameSize": {
+      "characters": "通常为16x16或32x32像素每帧",
+      "tilesets": "16x16像素每格",
+      "ui": "可变大小"
+    },
+    "animationFormat": "精灵表(strip)格式，文件名包含帧数如_strip8, _strip9, _strip10等",
+    "directions": "角色动画支持4方向或8方向，通常在精灵表中按方向顺序排列"
+  },
+  "quick_access": {
+    "player_base_idle": "assets_reference/Sunnyside_World_ASSET_PACK_V2.1/Sunnyside_World_Assets/Characters/Human/IDLE",
+    "player_base_walk": "assets_reference/Sunnyside_World_ASSET_PACK_V2.1/Sunnyside_World_Assets/Characters/Human/WALKING",
+    "tileset_main": "assets_reference/Sunnyside_World_ASSET_PACK_V2.1/Sunnyside_World_Assets/Tilesets/tileset_sunnysideworld",
+    "ui_box_white": "assets_reference/Sunnyside_World_ASSET_PACK_V2.1/Sunnyside_World_Assets/UI/9slice_box_white"
+  },
+  "notes": [
+    "此素材包包含完整的角色动画系统，支持多种发型和动作",
+    "作物资源包含多个生长阶段，可用于实现种植系统",
+    "9切片UI元素可缩放适应不同尺寸的UI需求",
+    "素材风格统一，适合农场模拟类游戏",
+    "文件名中的strip数字表示动画帧数",
+    "部分素材在__MACOSX文件夹中有重复，实际使用时请从assets_reference/Sunnyside_World_Assets目录获取"
+  ]
+}
